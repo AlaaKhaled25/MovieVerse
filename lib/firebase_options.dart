@@ -12,7 +12,7 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError('Web is not supported.');
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -40,5 +40,14 @@ class DefaultFirebaseOptions {
     projectId: 'flutter-iti-app',
     storageBucket: 'flutter-iti-app.firebasestorage.app',
     iosBundleId: 'com.example.movieVerse',
+  );
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyBiMse6jdvPb6KkgdyhJ1aP4qPBIcwwyHM',
+    appId: '1:245044685:web:3c36d9a8aec82fb5636084',
+    messagingSenderId: '245044685',
+    projectId: 'flutter-iti-app',
+    authDomain: 'flutter-iti-app.firebaseapp.com',
+    storageBucket: 'flutter-iti-app.firebasestorage.app',
+    measurementId: 'G-W543L0N7W4',
   );
 }

@@ -70,6 +70,10 @@ Movie _movieFromDbRow(Map<String, Object?> row) {
 class FavouritesProvider extends ChangeNotifier {
   final DatabaseHelper _helper = DatabaseHelper.instance;
 
+  /// On the web there is no native SQLite, so we fall back to in-memory only.
+  /// (The real target is Android/iOS where SQFLite provides persistence.)
+  final bool _isWeb = kIsWeb;
+
   /// Currently stored favourite movies (keyed by movie id).
   final Map<int, Movie> _favourites = {};
 
@@ -104,6 +108,12 @@ class FavouritesProvider extends ChangeNotifier {
   ///
   /// Should be called once when the app starts (after authentication).
   Future<void> loadAll() async {
+    // No database to read from on the web; start empty.
+    if (_isWeb) {
+      notifyListeners();
+      return;
+    }
+
     final db = await _helper.database;
 
     final favRows = await db.query('favourites');
@@ -131,16 +141,20 @@ class FavouritesProvider extends ChangeNotifier {
   Future<void> addFavourite(Movie movie) async {
     if (_favourites.containsKey(movie.id)) return;
 
-    final db = await _helper.database;
-    await db.insert('favourites', _toFavMap(movie));
+    if (!_isWeb) {
+      final db = await _helper.database;
+      await db.insert('favourites', _toFavMap(movie));
+    }
     _favourites[movie.id] = movie;
     notifyListeners();
   }
 
   /// Removes a movie from favourites.
   Future<void> removeFavourite(int movieId) async {
-    final db = await _helper.database;
-    await db.delete('favourites', where: 'id = ?', whereArgs: [movieId]);
+    if (!_isWeb) {
+      final db = await _helper.database;
+      await db.delete('favourites', where: 'id = ?', whereArgs: [movieId]);
+    }
     _favourites.remove(movieId);
     notifyListeners();
   }
@@ -159,16 +173,20 @@ class FavouritesProvider extends ChangeNotifier {
   Future<void> addToList(Movie movie, MovieListType type) async {
     await removeFromAllLists(movie.id); // ensure only one membership
 
-    final db = await _helper.database;
-    await db.insert('movie_lists', _toListMap(movie, type));
+    if (!_isWeb) {
+      final db = await _helper.database;
+      await db.insert('movie_lists', _toListMap(movie, type));
+    }
     _movieLists[type]!.add(movie);
     notifyListeners();
   }
 
   /// Removes a movie from every personal list.
   Future<void> removeFromAllLists(int movieId) async {
-    final db = await _helper.database;
-    await db.delete('movie_lists', where: 'id = ?', whereArgs: [movieId]);
+    if (!_isWeb) {
+      final db = await _helper.database;
+      await db.delete('movie_lists', where: 'id = ?', whereArgs: [movieId]);
+    }
     for (final type in MovieListType.values) {
       _movieLists[type]!.removeWhere((m) => m.id == movieId);
     }
