@@ -14,6 +14,12 @@ class AppColors {
   /// Accent colour for buttons and highlights (amber/gold).
   static const Color accent = Color(0xFFF5C518);
 
+  /// Deep navy for the top of the splash gradient.
+  static const Color navyStart = Color(0xFF0B1424);
+
+  /// Richer blue towards the bottom of the splash gradient.
+  static const Color navyEnd = Color(0xFF1E3A5F);
+
   /// Standard text colour.
   static const Color textPrimary = Color(0xFFF5F5F5);
 

@@ -4,17 +4,18 @@ import '../utils/app_colors.dart';
 
 /// Animated, branded splash screen shown on app launch.
 ///
-/// It plays a short fade-in + scale animation. The AuthGate decides for how
-/// long it stays visible (minimum duration + cap), so this widget owns only
-/// the visuals and holds no timer logic.
+/// Uses a navy-to-blue gradient hero with a centered glowing movie icon, the
+/// MovieVerse wordmark and a tagline, plus a subtle shine + scale entrance.
+/// The AuthGate decides how long it stays visible (minimum duration + cap),
+/// so this widget owns only the visuals.
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
   /// How long the splash should stay visible at minimum.
-  static const Duration minimumDuration = Duration(milliseconds: 2000);
+  static const Duration minimumDuration = Duration(milliseconds: 1300);
 
   /// Safety cap: never let the splash block the UI longer than this.
-  static const Duration maximumDuration = Duration(seconds: 6);
+  static const Duration maximumDuration = Duration(seconds: 4);
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();
@@ -25,13 +26,14 @@ class _SplashScreenState extends State<SplashScreen>
   late final AnimationController _controller;
   late final Animation<double> _fade;
   late final Animation<double> _scale;
+  late final Animation<double> _shimmer;
 
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1100),
+      duration: const Duration(milliseconds: 1000),
     );
     _fade =
         CurvedAnimation(parent: _controller, curve: Curves.easeOut).drive(
@@ -40,7 +42,10 @@ class _SplashScreenState extends State<SplashScreen>
     _scale = CurvedAnimation(
       parent: _controller,
       curve: const Interval(0, 0.7, curve: Curves.easeOutBack),
-    ).drive(Tween<double>(begin: 0.6, end: 1));
+    ).drive(Tween<double>(begin: 0.7, end: 1));
+    _shimmer = CurvedAnimation(parent: _controller, curve: Curves.easeOut).drive(
+      Tween<double>(begin: 0.35, end: 1),
+    );
 
     _controller.forward();
   }
@@ -54,79 +59,108 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.primary,
-      body: SafeArea(
-        child: Column(
-          children: [
-            const Spacer(flex: 2),
-            // Animated logo + name.
-            FadeTransition(
-              opacity: _fade,
-              child: ScaleTransition(
-                scale: _scale,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // Rounded app icon with the movie glyph.
-                    Container(
-                      width: 108,
-                      height: 108,
-                      decoration: BoxDecoration(
-                        color: AppColors.surface,
-                        borderRadius: BorderRadius.circular(28),
-                        border: Border.all(
-                          color: AppColors.accent.withValues(alpha: 0.6),
-                          width: 2,
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.4),
-                            blurRadius: 20,
-                            offset: const Offset(0, 8),
+      // Gradient hero background: deep navy fading into a richer blue.
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [AppColors.navyStart, AppColors.navyEnd],
+          ),
+        ),
+        child: SafeArea(
+          child: Column(
+            children: [
+              const Spacer(flex: 2),
+              // Centered logo block (fade + scale entrance).
+              Center(
+                child: FadeTransition(
+                  opacity: _fade,
+                  child: ScaleTransition(
+                    scale: _scale,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        // Glowing rounded icon tile.
+                        Container(
+                          width: 116,
+                          height: 116,
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [Color(0xFF22344F), Color(0xFF16263C)],
+                            ),
+                            borderRadius: BorderRadius.circular(30),
+                            border: Border.all(
+                              color: AppColors.accent.withValues(alpha: 0.7),
+                              width: 2,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.accent.withValues(alpha: 0.25),
+                                blurRadius: 34,
+                                spreadRadius: 2,
+                                offset: const Offset(0, 10),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                      child: const Icon(
-                        Icons.movie_filter,
-                        size: 64,
-                        color: AppColors.accent,
-                      ),
+                          child: const Icon(
+                            Icons.movie_filter,
+                            size: 66,
+                            color: AppColors.accent,
+                          ),
+                        ),
+                        const SizedBox(height: 28),
+                        const Text(
+                          'MovieVerse',
+                          style: TextStyle(
+                            fontSize: 38,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 1.4,
+                            color: AppColors.textPrimary,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          'Your personal cinema companion',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: AppColors.textSecondary.withValues(alpha: 0.9),
+                            letterSpacing: 0.5,
+                          ),
+                        ),
+                        // Subtle golden underline accent.
+                        const SizedBox(height: 18),
+                        FadeTransition(
+                          opacity: _shimmer,
+                          child: Container(
+                            width: 56,
+                            height: 3,
+                            decoration: BoxDecoration(
+                              color: AppColors.accent,
+                              borderRadius: BorderRadius.circular(2),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 24),
-                    const Text(
-                      'MovieVerse',
-                      style: TextStyle(
-                        fontSize: 34,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 1.2,
-                        color: AppColors.textPrimary,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    const Text(
-                      'Your personal cinema companion',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: AppColors.textSecondary,
-                        letterSpacing: 0.4,
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
               ),
-            ),
-            const Spacer(flex: 3),
-            // Bottom progress indicator.
-            const SizedBox(
-              width: 24,
-              height: 24,
-              child: CircularProgressIndicator(
-                strokeWidth: 2.5,
-                color: AppColors.accent,
+              const Spacer(flex: 3),
+              // Bottom progress indicator.
+              const SizedBox(
+                width: 24,
+                height: 24,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2.5,
+                  color: AppColors.accent,
+                ),
               ),
-            ),
-            const SizedBox(height: 40),
-          ],
+              const SizedBox(height: 40),
+            ],
+          ),
         ),
       ),
     );

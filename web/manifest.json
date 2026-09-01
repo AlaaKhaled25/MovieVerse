@@ -1,6 +1,6 @@
 {
-    "name": "movie_verse",
-    "short_name": "movie_verse",
+    "name": "MovieVerse",
+    "short_name": "MovieVerse",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

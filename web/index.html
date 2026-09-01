@@ -33,26 +33,37 @@
   <link rel="manifest" href="manifest.json">
 
   <style>
-    /* Branded pre-Flutter loader: navy background matching lib/utils/app_colors.dart. */
+    /* Branded pre-Flutter loader: navy->blue gradient matching the app splash. */
     html, body { margin: 0; height: 100%; }
     #boot-splash {
       position: fixed; inset: 0;
-      background: #0F1B2B;                 /* AppColors.primary */
+      background: linear-gradient(180deg, #0B1424 0%, #1E3A5F 100%);
       display: flex; align-items: center; justify-content: center;
       flex-direction: column;
+      text-align: center;
       z-index: 9999;
     }
     #boot-splash .logo {
-      width: 108px; height: 108px;
-      background: #1B2A3F;                 /* AppColors.surface */
-      border: 2px solid rgba(245, 197, 24, 0.6);
-      border-radius: 28px;
+      width: 116px; height: 116px;
+      background: linear-gradient(135deg, #22344F, #16263C);
+      border: 2px solid rgba(245, 197, 24, 0.7);
+      border-radius: 30px;
       display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 10px 34px rgba(245, 197, 24, 0.25);
     }
     #boot-splash .logo svg { fill: #F5C518; }  /* AppColors.accent */
-    #boot-splash h1 { color: #F5F5F5; font-family: Arial, sans-serif; }
-    #boot-splash p  { color: #B0BEC5; font-family: Arial, sans-serif; }
+    #boot-splash h1 {
+      color: #F5F5F5; font-family: Arial, sans-serif;
+      margin: 28px 0 0; font-size: 38px; font-weight: bold; letter-spacing: 1.4px;
+    }
+    #boot-splash p  {
+      color: #B0BEC5; font-family: Arial, sans-serif;
+      margin: 10px 0 0; font-size: 14px; letter-spacing: 0.5px;
+    }
+    #boot-splash .bar {
+      width: 56px; height: 3px; margin-top: 18px;
+      background: #F5C518; border-radius: 2px;
+    }
     #boot-splash .spinner {
       width: 24px; height: 24px; margin-top: 28px;
       border: 2.5px solid rgba(245, 197, 24, 0.25);
@@ -67,13 +78,14 @@
   <!-- Hidden once the Flutter engine draws its first frame. -->
   <div id="boot-splash">
     <div class="logo">
-      <svg viewBox="0 0 24 24" width="64" height="64" aria-hidden="true">
+      <svg viewBox="0 0 24 24" width="66" height="66" aria-hidden="true">
         <!-- movie_filter icon -->
         <path d="M18 4l2 4h-3l-2-4h-2l2 4h-3l-2-4H8l2 4H7L5 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4h-4z"/>
       </svg>
     </div>
-    <h1 style="margin:24px 0 0;font-size:34px;font-weight:bold;letter-spacing:1px;">MovieVerse</h1>
-    <p style="margin:8px 0 0;font-size:14px;">Your personal cinema companion</p>
+    <h1>MovieVerse</h1>
+    <p>Your personal cinema companion</p>
+    <div class="bar"></div>
     <div class="spinner"></div>
   </div>
 
