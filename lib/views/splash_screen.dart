@@ -12,10 +12,10 @@ class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
   /// How long the splash should stay visible at minimum.
-  static const Duration minimumDuration = Duration(milliseconds: 1300);
+  static const Duration minimumDuration = Duration(milliseconds: 800);
 
   /// Safety cap: never let the splash block the UI longer than this.
-  static const Duration maximumDuration = Duration(seconds: 4);
+  static const Duration maximumDuration = Duration(seconds: 3);
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();
@@ -33,7 +33,7 @@ class _SplashScreenState extends State<SplashScreen>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1000),
+      duration: const Duration(milliseconds: 600),
     );
     _fade =
         CurvedAnimation(parent: _controller, curve: Curves.easeOut).drive(
