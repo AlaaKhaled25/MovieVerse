@@ -1,78 +1,23 @@
 import 'package:flutter/foundation.dart';
 
-import '../database/database_helper.dart';
+import '../controllers/favourites_controller.dart';
 import '../models/movie.dart';
 
-/// The three personal movie lists a user can maintain.
-enum MovieListType { watched, watching, wantToWatch }
+// Re-export so existing consumers (movie_lists_screen.dart,
+// movie_details_screen.dart, ...) keep their `import 'providers/
+// favourites_provider.dart'` and still see MovieListType.
+export '../controllers/favourites_controller.dart'
+    show MovieListType, MovieListTypeExtension;
 
-/// Extension helpers for the list types.
-extension MovieListTypeExtension on MovieListType {
-  String get dbValue {
-    switch (this) {
-      case MovieListType.watched:
-        return 'watched';
-      case MovieListType.watching:
-        return 'watching';
-      case MovieListType.wantToWatch:
-        return 'want_to_watch';
-    }
-  }
-
-  String get label {
-    switch (this) {
-      case MovieListType.watched:
-        return 'Watched';
-      case MovieListType.watching:
-        return 'Watching';
-      case MovieListType.wantToWatch:
-        return 'Want to Watch';
-    }
-  }
-}
-
-MovieListType _listTypeFromDb(String value) {
-  switch (value) {
-    case 'watched':
-      return MovieListType.watched;
-    case 'watching':
-      return MovieListType.watching;
-    default:
-      return MovieListType.wantToWatch;
-  }
-}
-
-/// Maps a database row back to a [Movie].
-Movie _movieFromDbRow(Map<String, Object?> row) {
-  return Movie(
-    id: row['id'] as int,
-    title: row['title'] as String? ?? '',
-    posterPath: row['poster_path'] as String? ?? '',
-    overview: row['overview'] as String? ?? '',
-    releaseDate: row['release_date'] as String? ?? '',
-    voteAverage: (row['vote_average'] as num?)?.toDouble() ?? 0.0,
-    backdropPath: row['backdrop_path'] as String? ?? '',
-    genreIds: const [],
-    adult: false,
-    originalLanguage: '',
-    originalTitle: '',
-    voteCount: 0,
-    popularity: 0.0,
-    video: false,
-  );
-}
-
-/// Provider that manages both the global Favourites list (SQFLite) and the
-/// three personal movie lists (Watched / Watching / Want to Watch).
+/// Provider that manages the REACTIVE state for both the global Favourites
+/// list and the three personal movie lists (Watched / Watching / Want to
+/// Watch).
 ///
-/// All data is persisted locally with SQFLite, so favourites and list entries
-/// survive app restarts (a mandatory requirement).
+/// The Provider keeps the in-memory data the UI reacts to; every read/write is
+/// delegated to [FavouritesController], which owns the SQFLite persistence
+/// rules (with an in-memory fallback on the web).
 class FavouritesProvider extends ChangeNotifier {
-  final DatabaseHelper _helper = DatabaseHelper.instance;
-
-  /// On the web there is no native SQLite, so we fall back to in-memory only.
-  /// (The real target is Android/iOS where SQFLite provides persistence.)
-  final bool _isWeb = kIsWeb;
+  final FavouritesController _controller = FavouritesController();
 
   /// Currently stored favourite movies (keyed by movie id).
   final Map<int, Movie> _favourites = {};
@@ -108,28 +53,18 @@ class FavouritesProvider extends ChangeNotifier {
   ///
   /// Should be called once when the app starts (after authentication).
   Future<void> loadAll() async {
-    // No database to read from on the web; start empty.
-    if (_isWeb) {
-      notifyListeners();
-      return;
-    }
+    final data = await _controller.loadAll();
 
-    final db = await _helper.database;
-
-    final favRows = await db.query('favourites');
     _favourites.clear();
-    for (final row in favRows) {
-      final movie = _movieFromDbRow(row);
+    for (final movie in data.favourites) {
       _favourites[movie.id] = movie;
     }
 
-    final listRows = await db.query('movie_lists');
     for (final type in MovieListType.values) {
       _movieLists[type] = [];
     }
-    for (final row in listRows) {
-      final type = _listTypeFromDb(row['list_type'] as String? ?? '');
-      _movieLists[type]!.add(_movieFromDbRow(row));
+    for (final entry in data.lists.entries) {
+      _movieLists[entry.key] = entry.value;
     }
 
     notifyListeners();
@@ -141,20 +76,14 @@ class FavouritesProvider extends ChangeNotifier {
   Future<void> addFavourite(Movie movie) async {
     if (_favourites.containsKey(movie.id)) return;
 
-    if (!_isWeb) {
-      final db = await _helper.database;
-      await db.insert('favourites', _toFavMap(movie));
-    }
+    await _controller.insertFavourite(movie);
     _favourites[movie.id] = movie;
     notifyListeners();
   }
 
   /// Removes a movie from favourites.
   Future<void> removeFavourite(int movieId) async {
-    if (!_isWeb) {
-      final db = await _helper.database;
-      await db.delete('favourites', where: 'id = ?', whereArgs: [movieId]);
-    }
+    await _controller.deleteFavourite(movieId);
     _favourites.remove(movieId);
     notifyListeners();
   }
@@ -171,51 +100,23 @@ class FavouritesProvider extends ChangeNotifier {
   /// Adds a movie to the given personal list, removing it from any other
   /// list first (a movie belongs to at most one list at a time).
   Future<void> addToList(Movie movie, MovieListType type) async {
-    await removeFromAllLists(movie.id); // ensure only one membership
-
-    if (!_isWeb) {
-      final db = await _helper.database;
-      await db.insert('movie_lists', _toListMap(movie, type));
+    // Ensure only one membership: persist + memory first, then add.
+    await _controller.deleteFromAllLists(movie.id);
+    for (final t in MovieListType.values) {
+      _movieLists[t]!.removeWhere((m) => m.id == movie.id);
     }
+
+    await _controller.insertToList(movie, type);
     _movieLists[type]!.add(movie);
     notifyListeners();
   }
 
   /// Removes a movie from every personal list.
   Future<void> removeFromAllLists(int movieId) async {
-    if (!_isWeb) {
-      final db = await _helper.database;
-      await db.delete('movie_lists', where: 'id = ?', whereArgs: [movieId]);
-    }
+    await _controller.deleteFromAllLists(movieId);
     for (final type in MovieListType.values) {
       _movieLists[type]!.removeWhere((m) => m.id == movieId);
     }
     notifyListeners();
   }
-
-  // ===================== MAPPING HELPERS =====================
-
-  Map<String, Object?> _toFavMap(Movie m) => {
-        'id': m.id,
-        'title': m.title,
-        'poster_path': m.posterPath,
-        'overview': m.overview,
-        'release_date': m.releaseDate,
-        'vote_average': m.voteAverage,
-        'backdrop_path': m.backdropPath,
-        'genre_ids': m.genreIds.join(','),
-        'created_at': DateTime.now().millisecondsSinceEpoch,
-      };
-
-  Map<String, Object?> _toListMap(Movie m, MovieListType type) => {
-        'id': m.id,
-        'list_type': type.dbValue,
-        'title': m.title,
-        'poster_path': m.posterPath,
-        'overview': m.overview,
-        'release_date': m.releaseDate,
-        'vote_average': m.voteAverage,
-        'backdrop_path': m.backdropPath,
-        'created_at': DateTime.now().millisecondsSinceEpoch,
-      };
 }

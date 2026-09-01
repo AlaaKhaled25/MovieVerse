@@ -5,22 +5,38 @@ import '../providers/auth_provider.dart';
 import '../providers/favourites_provider.dart';
 import 'auth_screen.dart';
 import 'bottom_nav.dart';
+import 'splash_screen.dart';
 
-/// A routing widget that shows the Login/Register screen when the user is
-/// logged out, or the main app (bottom navigation) when they are logged in.
+/// A routing widget that decides what to show at app start:
 ///
-/// This is the heart of the authentication flow:
-///   Splash -> Auth (Login/Register) -> Home
-class AuthGate extends StatelessWidget {
+///   Splash (>= minimum duration) -> Auth (Login/Register)  OR  Main app
+///
+/// The splash is kept on screen until Firebase has resolved the initial
+/// auth state AND a short branded delay has elapsed, so we never flash a
+/// login screen prematurely.
+class AuthGate extends StatefulWidget {
   const AuthGate({super.key});
+
+  @override
+  State<AuthGate> createState() => _AuthGateState();
+}
+
+class _AuthGateState extends State<AuthGate> {
+  /// Whether the splash's minimum display time has elapsed.
+  bool _splashElapsed = false;
 
   @override
   Widget build(BuildContext context) {
     final auth = context.watch<AuthProvider>();
 
-    // While firebase is resolving the initial auth state, show a splash.
-    if (auth.isLoading) {
-      return const _SplashScreen();
+    // Keep showing the splash while Firebase resolves OR until the minimum
+    // splash duration has passed.
+    if (auth.isLoading || !_splashElapsed) {
+      return SplashScreen(
+        onFinished: () {
+          if (mounted) setState(() => _splashElapsed = true);
+        },
+      );
     }
 
     if (!auth.isAuthenticated) {
@@ -34,19 +50,5 @@ class AuthGate extends StatelessWidget {
     });
 
     return const MainNavScreen();
-  }
-}
-
-/// Simple splash shown while Firebase determines the auth state.
-class _SplashScreen extends StatelessWidget {
-  const _SplashScreen();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
-        child: CircularProgressIndicator(),
-      ),
-    );
   }
 }

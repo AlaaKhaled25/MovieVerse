@@ -19,6 +19,31 @@ class AppHelpers {
     return 'https://image.tmdb.org/t/p/$size$path';
   }
 
+  /// Builds a full actor profile image URL from a TMDB-relative path.
+  static String profileUrl(String path, {String size = 'w185'}) {
+    if (path.isEmpty) return '';
+    return 'https://image.tmdb.org/t/p/$size$path';
+  }
+
+  /// Formats a runtime in minutes into a human string like "2h 28m".
+  static String formatRuntime(int minutes) {
+    if (minutes <= 0) return 'Unknown';
+    final h = minutes ~/ 60;
+    final m = minutes % 60;
+    if (h == 0) return '${m}m';
+    if (m == 0) return '${h}h';
+    return '${h}h ${m}m';
+  }
+
+  /// Formats a large currency value (e.g. budget/revenue) as US dollars.
+  static String formatCurrency(num value) {
+    if (value <= 0) return '—';
+    if (value >= 1000000) {
+      return '\$${(value / 1000000).toStringAsFixed(1)}M';
+    }
+    return '\$${value.toStringAsFixed(0)}';
+  }
+
   /// Formats a numeric rating (e.g. 8.4) as a single decimal string.
   static String formatRating(double rating) => rating.toStringAsFixed(1);
 

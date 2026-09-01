@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 
 import '../config/api_config.dart';
 import '../models/movie.dart';
+import '../models/movie_details.dart';
 
 /// Custom exception used to surface meaningful API errors up to the
 /// Controllers/UI layers, instead of raw `http` exceptions.
@@ -101,5 +102,20 @@ class TmdbApiService {
     return results
         .map((item) => Movie.fromJson(item as Map<String, dynamic>))
         .toList();
+  }
+
+  /// Fetches full details for a single movie, including its cast (actors),
+  /// studios (production companies) and all extended metadata (runtime,
+  /// budget, revenue, tagline, status, languages, countries...).
+  Future<MovieDetails> fetchMovieDetails(int movieId) async {
+    // The `credits` appendage adds the cast to the same response.
+    final json = await _getJson(
+      '/movie/$movieId',
+      {
+        'language': 'en-US',
+        'append_to_response': 'credits',
+      },
+    );
+    return MovieDetails.fromJson(json);
   }
 }

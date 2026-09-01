@@ -2,9 +2,11 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'controllers/movie_controller.dart';
 import 'firebase_options.dart';
 import 'providers/auth_provider.dart';
 import 'providers/favourites_provider.dart';
+import 'providers/movie_details_provider.dart';
 import 'providers/movie_provider.dart';
 import 'services/tmdb_api_service.dart';
 import 'utils/app_theme.dart';
@@ -34,7 +36,14 @@ class MovieVerseApp extends StatelessWidget {
         // Auth provider manages Firebase authentication state.
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         // Movie provider owns TMDB movie/search state.
-        ChangeNotifierProvider(create: (_) => MovieProvider(TmdbApiService())),
+        ChangeNotifierProvider(
+          create: (_) => MovieProvider(MovieController(TmdbApiService())),
+        ),
+        // Movie details provider fetches a single movie's full metadata/cast.
+        ChangeNotifierProvider(
+          create: (_) =>
+              MovieDetailsProvider(MovieController(TmdbApiService())),
+        ),
         // Favourites provider owns local SQFLite favourites & lists.
         ChangeNotifierProvider(create: (_) => FavouritesProvider()),
       ],

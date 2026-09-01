@@ -1,49 +1,23 @@
 import 'package:flutter/foundation.dart';
 
+import '../controllers/movie_controller.dart';
 import '../models/movie.dart';
-import '../services/tmdb_api_service.dart';
 
-/// Enumerates the different movie collections exposed by the TMDB service.
-enum MovieEndpoint { popular, topRated, nowPlaying, upcoming }
+// Re-export so existing consumers (e.g. home_screen.dart) can keep their
+// `import 'providers/movie_provider.dart'` and still see MovieEndpoint.
+export '../controllers/movie_controller.dart'
+    show MovieEndpoint, MovieEndpointSlug;
 
-/// Extension that maps each [MovieEndpoint] to its TMDB slug.
-extension MovieEndpointSlug on MovieEndpoint {
-  String get slug {
-    switch (this) {
-      case MovieEndpoint.popular:
-        return 'popular';
-      case MovieEndpoint.topRated:
-        return 'top_rated';
-      case MovieEndpoint.nowPlaying:
-        return 'now_playing';
-      case MovieEndpoint.upcoming:
-        return 'upcoming';
-    }
-  }
-
-  String get title {
-    switch (this) {
-      case MovieEndpoint.popular:
-        return 'Popular';
-      case MovieEndpoint.topRated:
-        return 'Top Rated';
-      case MovieEndpoint.nowPlaying:
-        return 'Now Playing';
-      case MovieEndpoint.upcoming:
-        return 'Upcoming';
-    }
-  }
-}
-
-/// Provider that owns ALL movie-related state for the application:
+/// Provider that owns ALL movie-related REACTIVE state for the application:
 /// the fetched lists, the search results, and the loading/error flags.
 ///
-/// Keeping this in a Provider (rather than scatter-gathering setState calls)
-/// satisfies the mandatory "Provider state management" requirement.
+/// It satisfies the mandatory "Provider state management" requirement. The
+/// actual business logic (which endpoint to call, error mapping) lives in
+/// [MovieController], keeping this class a thin state container.
 class MovieProvider extends ChangeNotifier {
-  final TmdbApiService _api;
+  MovieProvider(this._controller);
 
-  MovieProvider(this._api);
+  final MovieController _controller;
 
   /// Movie results keyed by endpoint slug.
   final Map<String, List<Movie>> _moviesByEndpoint = {};
@@ -68,7 +42,10 @@ class MovieProvider extends ChangeNotifier {
   /// Fetches a given movie endpoint from the API and updates state.
   ///
   /// Skipped if the endpoint is already loaded and [forceRefresh] is false.
-  Future<void> loadMovies(MovieEndpoint endpoint, {bool forceRefresh = false}) async {
+  Future<void> loadMovies(
+    MovieEndpoint endpoint, {
+    bool forceRefresh = false,
+  }) async {
     if (!forceRefresh && _moviesByEndpoint.containsKey(endpoint.slug)) {
       return; // Already loaded, no need to hit the network again.
     }
@@ -78,7 +55,7 @@ class MovieProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final movies = await _api.fetchMovies(endpoint.slug);
+      final movies = await _controller.fetchMovies(endpoint);
       _moviesByEndpoint[endpoint.slug] = movies;
     } on ApiException catch (e) {
       _error = e.message;
@@ -97,7 +74,7 @@ class MovieProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      _searchResults = await _api.searchMovies(query);
+      _searchResults = await _controller.search(query);
     } on ApiException catch (e) {
       _error = e.message;
     } catch (e) {
