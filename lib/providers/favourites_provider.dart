@@ -14,8 +14,9 @@ export '../controllers/favourites_controller.dart'
 /// Watch).
 ///
 /// The Provider keeps the in-memory data the UI reacts to; every read/write is
-/// delegated to [FavouritesController], which owns the SQFLite persistence
-/// rules (with an in-memory fallback on the web).
+/// delegated to [FavouritesController], which owns the persistence rules:
+///   - mobile: SQFLite (durable across restarts)
+///   - web:    SharedPreferences (survives page reloads)
 class FavouritesProvider extends ChangeNotifier {
   final FavouritesController _controller = FavouritesController();
 
@@ -49,7 +50,7 @@ class FavouritesProvider extends ChangeNotifier {
     return null;
   }
 
-  /// Loads all favourite & list data from the local database.
+  /// Loads all favourite & list data from the persistence backend.
   ///
   /// Should be called once when the app starts (after authentication).
   Future<void> loadAll() async {
@@ -70,21 +71,32 @@ class FavouritesProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// On web, persists the full current snapshot. No-op on mobile (SQFLite is
+  /// updated incrementally by the controller instead).
+  Future<void> _persistWeb() {
+    return _controller.writeWebState(
+      favourites: _favourites.values.toList(),
+      lists: _movieLists,
+    );
+  }
+
   // ===================== FAVOURITES =====================
 
-  /// Adds a movie to favourites (persisting it in the database).
+  /// Adds a movie to favourites (persisting it).
   Future<void> addFavourite(Movie movie) async {
     if (_favourites.containsKey(movie.id)) return;
 
-    await _controller.insertFavourite(movie);
+    await _controller.insertFavourite(movie); // mobile
     _favourites[movie.id] = movie;
+    await _persistWeb(); // web
     notifyListeners();
   }
 
   /// Removes a movie from favourites.
   Future<void> removeFavourite(int movieId) async {
-    await _controller.deleteFavourite(movieId);
+    await _controller.deleteFavourite(movieId); // mobile
     _favourites.remove(movieId);
+    await _persistWeb(); // web
     notifyListeners();
   }
 
@@ -101,22 +113,24 @@ class FavouritesProvider extends ChangeNotifier {
   /// list first (a movie belongs to at most one list at a time).
   Future<void> addToList(Movie movie, MovieListType type) async {
     // Ensure only one membership: persist + memory first, then add.
-    await _controller.deleteFromAllLists(movie.id);
+    await _controller.deleteFromAllLists(movie.id); // mobile
     for (final t in MovieListType.values) {
       _movieLists[t]!.removeWhere((m) => m.id == movie.id);
     }
 
-    await _controller.insertToList(movie, type);
+    await _controller.insertToList(movie, type); // mobile
     _movieLists[type]!.add(movie);
+    await _persistWeb(); // web
     notifyListeners();
   }
 
   /// Removes a movie from every personal list.
   Future<void> removeFromAllLists(int movieId) async {
-    await _controller.deleteFromAllLists(movieId);
+    await _controller.deleteFromAllLists(movieId); // mobile
     for (final type in MovieListType.values) {
       _movieLists[type]!.removeWhere((m) => m.id == movieId);
     }
+    await _persistWeb(); // web
     notifyListeners();
   }
 }

@@ -4,16 +4,17 @@ import '../utils/app_colors.dart';
 
 /// Animated, branded splash screen shown on app launch.
 ///
-/// It plays a short fade-in + scale animation, then calls [onFinished]
-/// so the parent (AuthGate) can route to Auth or the main app.
+/// It plays a short fade-in + scale animation. The AuthGate decides for how
+/// long it stays visible (minimum duration + cap), so this widget owns only
+/// the visuals and holds no timer logic.
 class SplashScreen extends StatefulWidget {
-  const SplashScreen({super.key, required this.onFinished});
+  const SplashScreen({super.key});
 
-  /// Called once the splash timing + animation complete.
-  final VoidCallback onFinished;
-
-  /// How long the splash stays visible before [onFinished] fires.
+  /// How long the splash should stay visible at minimum.
   static const Duration minimumDuration = Duration(milliseconds: 2000);
+
+  /// Safety cap: never let the splash block the UI longer than this.
+  static const Duration maximumDuration = Duration(seconds: 6);
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();
@@ -25,14 +26,12 @@ class _SplashScreenState extends State<SplashScreen>
   late final Animation<double> _fade;
   late final Animation<double> _scale;
 
-  bool _finished = false;
-
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1200),
+      duration: const Duration(milliseconds: 1100),
     );
     _fade =
         CurvedAnimation(parent: _controller, curve: Curves.easeOut).drive(
@@ -44,15 +43,6 @@ class _SplashScreenState extends State<SplashScreen>
     ).drive(Tween<double>(begin: 0.6, end: 1));
 
     _controller.forward();
-
-    // Show the splash for at least `minimumDuration` before leaving.
-    Future.delayed(SplashScreen.minimumDuration, _finish);
-  }
-
-  void _finish() {
-    if (_finished || !mounted) return;
-    _finished = true;
-    widget.onFinished();
   }
 
   @override

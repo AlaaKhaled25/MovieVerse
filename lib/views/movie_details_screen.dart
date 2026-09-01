@@ -517,13 +517,28 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
                   trailing: current == type
                       ? const Icon(Icons.check, color: AppColors.accent)
                       : null,
-                  onTap: () {
-                    if (current == type) {
-                      favourites.removeFromAllLists(movie.id);
-                    } else {
-                      favourites.addToList(movie, type);
-                    }
+                  onTap: () async {
                     Navigator.pop(sheetContext);
+                    final messenger = ScaffoldMessenger.of(context);
+                    try {
+                      if (current == type) {
+                        await favourites.removeFromAllLists(movie.id);
+                        messenger.showSnackBar(
+                          SnackBar(content: Text('Removed from "${type.label}"')),
+                        );
+                      } else {
+                        await favourites.addToList(movie, type);
+                        messenger.showSnackBar(
+                          SnackBar(content: Text('Added to "${type.label}"')),
+                        );
+                      }
+                    } catch (_) {
+                      messenger.showSnackBar(
+                        const SnackBar(
+                          content: Text('Could not update the list. Try again.'),
+                        ),
+                      );
+                    }
                   },
                 ),
               const SizedBox(height: 8),
