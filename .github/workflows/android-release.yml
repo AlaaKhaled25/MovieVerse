@@ -29,6 +29,16 @@ jobs:
       - name: Restore dependencies
         run: flutter pub get
 
+      - name: Generate TMDB API config
+        run: |
+          mkdir -p lib/config
+          cat > lib/config/api_config.dart <<'EOF'
+          class ApiConfig {
+            ApiConfig._();
+            static const String tmdbApiKey = '${{ secrets.TMDB_API_KEY }}';
+          }
+          EOF
+
       - name: Build release APK
         run: flutter build apk --release
 
