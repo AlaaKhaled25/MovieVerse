@@ -48,3 +48,6 @@ app.*.map.json
 # The local config file holding the TMDB API key must stay private.
 lib/config/api_config.dart
 
+
+# ===== Deliverables: never commit generated docs =====
+/MOVIEVERSE_DEVELOPMENT_DOCUMENTATION.pdf
