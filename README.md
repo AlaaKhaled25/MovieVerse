@@ -205,6 +205,8 @@ All HTTP communication is isolated in `TmdbApiService` (`lib/services/tmdb_api_s
 
 The private `_getJson()` helper centralises network/timeout handling, JSON parsing, and friendly `ApiException` messages. The API key lives in `lib/config/api_config.dart`, which is **gitignored**.
 
+> 🔐 **Firebase keys are public by design.** Unlike the TMDB key, the Firebase client API keys in `lib/firebase_options.dart` and `android/app/google-services.json` are **not secrets** — Google embeds them in every client binary and web build because the app reads them at runtime. They must be committed for the app to work. Real protection comes from Firebase **Security Rules** and **App Check**, not from hiding the key.
+
 ---
 
 ## 📁 Project Structure
