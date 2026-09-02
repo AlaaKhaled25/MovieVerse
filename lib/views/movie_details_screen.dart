@@ -9,15 +9,15 @@ import '../utils/app_colors.dart';
 import '../utils/app_helpers.dart';
 import '../widgets/state_view.dart';
 
-/// Screen showing the full details of a selected movie, including:
-///  - Header (backdrop, title, rating, release date, genres, tagline)
-///  - Overview
-///  - Cast (actors) fetched from the TMDB credits
-///  - Studios (production companies)
-///  - Extended metadata (runtime, budget, revenue, status, language, countries)
-///
-/// Validates loading / error / data states and uses a dark palette with high
-/// colour contrast for readability.
+
+
+
+
+
+
+
+
+
 class MovieDetailsScreen extends StatefulWidget {
   const MovieDetailsScreen({super.key, required this.movie});
 
@@ -31,7 +31,7 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
   @override
   void initState() {
     super.initState();
-    // Start fetching the full details (actors, studios, metadata) on load.
+    
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<MovieDetailsProvider>().loadDetails(widget.movie.id);
     });
@@ -39,7 +39,7 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
 
   @override
   void dispose() {
-    // Clear cached details so the next movie starts fresh.
+    
     context.read<MovieDetailsProvider>().clear();
     super.dispose();
   }
@@ -53,16 +53,16 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
     );
   }
 
-  /// Chooses which state to render based on the details provider.
+  
   Widget _buildBody(MovieDetailsProvider provider) {
-    // Loading: show a spinner while the first details frame is pending.
+    
     if (provider.isLoading || provider.details == null) {
       return _buildScaffoldShell(
         child: const Center(child: CircularProgressIndicator()),
       );
     }
 
-    // Error: show a friendly message with retry.
+    
     if (provider.error != null) {
       return _buildScaffoldShell(
         child: StateView.error(
@@ -73,13 +73,13 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
       );
     }
 
-    // Data: render the full detail layout.
+    
     final details = provider.details!;
     return _buildScaffoldShell(child: _buildContent(details));
   }
 
-  /// Wraps content in the scrollable backdrop header (NOT a Scaffold — the
-  /// single Scaffold lives in build() above, so we never nest one inside it).
+  
+  
   Widget _buildScaffoldShell({required Widget child}) {
     return CustomScrollView(
       slivers: [
@@ -98,7 +98,7 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
     );
   }
 
-  /// Backdrop image or a dark, branded fallback when there's no image.
+  
   Widget _buildBackdrop() {
     final movie = widget.movie;
     if (movie.backdropPath.isEmpty && movie.posterPath.isEmpty) {
@@ -138,7 +138,7 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
     );
   }
 
-  /// The main scrollable content for a fully-loaded details payload.
+  
   Widget _buildContent(MovieDetails details) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -153,7 +153,7 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
     );
   }
 
-  // ================= INFO (title, rating, meta, tagline, actions) =================
+  
 
   Widget _infoSection(MovieDetails details) {
     final movie = details.movie;
@@ -162,7 +162,7 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Title.
+          
           Text(
             movie.title,
             style: const TextStyle(
@@ -173,7 +173,7 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
             ),
           ),
 
-          // Tagline (italic, muted but high-contrast).
+          
           if (details.tagline.isNotEmpty) ...[
             const SizedBox(height: 6),
             Text(
@@ -188,7 +188,7 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
 
           const SizedBox(height: 12),
 
-          // Meta line: rating • year • runtime • status.
+          
           Wrap(
             spacing: 14,
             runSpacing: 8,
@@ -215,12 +215,12 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
 
           const SizedBox(height: 12),
 
-          // Genres as chips (using the name lookup from the details payload).
+          
           _genreChips(movie.genreIds),
 
           const SizedBox(height: 20),
 
-          // ---- Action buttons: Favourite + Add to List ----
+          
           _actionRow(details.movie),
         ],
       ),
@@ -258,7 +258,7 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
     );
   }
 
-  // ================= OVERVIEW =================
+  
 
   Widget _overviewSection(MovieDetails details) {
     return _sectionPadding(
@@ -282,10 +282,10 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
     );
   }
 
-  // ================= CAST (actors) =================
+  
 
   Widget _castSection(MovieDetails details) {
-    // Sort by billing order (lead actors first) and cap the list.
+    
     final cast = [...details.cast]..sort((a, b) => a.order.compareTo(b.order));
     final top = cast.length > 15 ? cast.sublist(0, 15) : cast;
 
@@ -309,7 +309,7 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
     );
   }
 
-  // ================= STUDIOS =================
+  
 
   Widget _studioSection(MovieDetails details) {
     return _sectionPadding(
@@ -333,7 +333,7 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
     );
   }
 
-  // ================= EXTENDED METADATA =================
+  
 
   Widget _metadataSection(MovieDetails details) {
     final countries = details.productionCountries
@@ -418,9 +418,9 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
     );
   }
 
-  // ================= SHARED BUILDING BLOCKS =================
+  
 
-  /// A small icon + text pill used for rating / date / runtime / status.
+  
   Widget _metaChip({
     required IconData icon,
     required String text,
@@ -443,7 +443,7 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
     );
   }
 
-  /// Wraps a set of genre chips with good contrast.
+  
   Widget _genreChips(List<int> genreIds) {
     final names = genreIds
         .map((id) => genreNameLookup[id] ?? AppHelpers.genreNames[id] ?? '')
@@ -478,8 +478,8 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
   Widget _sectionPadding(Widget child) =>
       Padding(padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8), child: child);
 
-  /// Shows a bottom sheet letting the user add the movie to one of the three
-  /// personal lists (or remove it from its current list).
+  
+  
   void _showListPicker(BuildContext context, Movie movie) {
     final favourites = context.read<FavouritesProvider>();
     final current = favourites.getListTypeOf(movie.id);
@@ -549,7 +549,7 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
   }
 }
 
-/// A single actor card (photo + name + character) with high-contrast text.
+
 class _ActorCard extends StatelessWidget {
   const _ActorCard({required this.member});
 
@@ -562,7 +562,7 @@ class _ActorCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Profile photo (circular).
+          
           ClipOval(
             child: Container(
               width: 88,
@@ -608,7 +608,7 @@ class _ActorCard extends StatelessWidget {
   }
 }
 
-/// A studio card showing the company logo (or name when no logo).
+
 class _StudioCard extends StatelessWidget {
   const _StudioCard({required this.company});
 
@@ -662,7 +662,7 @@ class _StudioCard extends StatelessWidget {
   }
 }
 
-/// Reusable section heading with consistent styling.
+
 class _SectionTitle extends StatelessWidget {
   const _SectionTitle(this.title);
 

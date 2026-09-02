@@ -6,10 +6,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../database/database_helper.dart';
 import '../models/movie.dart';
 
-/// The three personal movie lists a user can maintain.
+
 enum MovieListType { watched, watching, wantToWatch }
 
-/// Extension helpers for the list types.
+
 extension MovieListTypeExtension on MovieListType {
   String get dbValue {
     switch (this) {
@@ -45,7 +45,7 @@ MovieListType _listTypeFromDb(String value) {
   }
 }
 
-/// Maps a database / prefs row back to a [Movie].
+
 Movie _movieFromRow(Map<String, dynamic> row) {
   return Movie(
     id: row['id'] as int,
@@ -65,7 +65,7 @@ Movie _movieFromRow(Map<String, dynamic> row) {
   );
 }
 
-/// The parsed result of loading favourites + lists.
+
 class FavouritesData {
   final List<Movie> favourites;
   final Map<MovieListType, List<Movie>> lists;
@@ -76,30 +76,30 @@ class FavouritesData {
   });
 }
 
-/// Controller that owns the favourite & personal-lists BUSINESS logic.
-///
-/// This is the "C" in the MVC layering:
-///   View (favourites/lists/details screens) -> Provider (FavouritesProvider,
-///   reactive in-memory state) -> Controller (this class: persistence rules)
-///   -> SQFLite (mobile) / SharedPreferences (web).
-///
-/// It decides HOW data is stored/read. The provider keeps the live state the
-/// UI reacts to and calls back into this controller for every write.
+
+
+
+
+
+
+
+
+
 class FavouritesController {
   final DatabaseHelper _helper = DatabaseHelper.instance;
 
-  /// True on web, where there is no native SQLite. We persist there with
-  /// SharedPreferences (localStorage) instead, so data survives page reloads.
+  
+  
   final bool isWeb = kIsWeb;
 
   static const String _favKey = 'movieverse_favourites_v1';
   static const String _listsKey = 'movieverse_lists_v1';
 
-  // ============================ LOADING ============================
+  
 
-  /// Loads all favourites and list rows from the persistence backend.
-  ///
-  /// Web: reads JSON from SharedPreferences. Mobile: reads SQFLite.
+  
+  
+  
   Future<FavouritesData> loadAll() async {
     if (isWeb) {
       final prefs = await SharedPreferences.getInstance();
@@ -145,38 +145,38 @@ class FavouritesController {
     return FavouritesData(favourites: favourites, lists: lists);
   }
 
-  // ============================ WRITING ============================
+  
 
-  /// Persists a movie into the favourites table (mobile only; no-op on web).
+  
   Future<void> insertFavourite(Movie movie) async {
     if (isWeb) return;
     final db = await _helper.database;
     await db.insert('favourites', _toFavMap(movie));
   }
 
-  /// Deletes a movie row from the favourites table (mobile only).
+  
   Future<void> deleteFavourite(int movieId) async {
     if (isWeb) return;
     final db = await _helper.database;
     await db.delete('favourites', where: 'id = ?', whereArgs: [movieId]);
   }
 
-  /// Persists a movie into a given movie-list table (mobile only).
+  
   Future<void> insertToList(Movie movie, MovieListType type) async {
     if (isWeb) return;
     final db = await _helper.database;
     await db.insert('movie_lists', _toListMap(movie, type));
   }
 
-  /// Removes a movie from every movie-list table (mobile only).
+  
   Future<void> deleteFromAllLists(int movieId) async {
     if (isWeb) return;
     final db = await _helper.database;
     await db.delete('movie_lists', where: 'id = ?', whereArgs: [movieId]);
   }
 
-  /// Persists the FULL favourites + lists snapshot (web only; no-op on mobile)
-  /// so that every change survives a page reload.
+  
+  
   Future<void> writeWebState({
     required List<Movie> favourites,
     required Map<MovieListType, List<Movie>> lists,
@@ -198,7 +198,7 @@ class FavouritesController {
     );
   }
 
-  // ===================== MAPPING HELPERS =====================
+  
 
   Map<String, dynamic> _toFavMap(Movie m) => {
         'id': m.id,

@@ -4,8 +4,8 @@ import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import '../utils/app_colors.dart';
 
-/// Profile screen displaying the authenticated user's information and a
-/// logout button. Logging out returns the user to the authentication screen.
+
+
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
@@ -23,7 +23,7 @@ class ProfileScreen extends StatelessWidget {
         child: Column(
           children: [
             const SizedBox(height: 16),
-            // Avatar circle.
+            
             CircleAvatar(
               radius: 48,
               backgroundColor: AppColors.accent,
@@ -39,7 +39,7 @@ class ProfileScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            // Display name / email.
+            
             Text(
               user?.displayName?.isNotEmpty ?? false
                   ? user!.displayName!
@@ -57,7 +57,7 @@ class ProfileScreen extends StatelessWidget {
             ),
             const SizedBox(height: 40),
 
-            // Logout button.
+            
             ElevatedButton.icon(
               onPressed: () => auth.logout(),
               icon: const Icon(Icons.logout),

@@ -7,9 +7,9 @@ import '../widgets/movie_card.dart';
 import '../widgets/state_view.dart';
 import 'movie_details_screen.dart';
 
-/// Screen that displays the user's three personal movie lists:
-/// Watched, Watching and Want to Watch. Tabs make it easy to switch between
-/// the three lists.
+
+
+
 class MovieListsScreen extends StatelessWidget {
   const MovieListsScreen({super.key});
 
@@ -41,7 +41,7 @@ class MovieListsScreen extends StatelessWidget {
   }
 }
 
-/// One tab showing the movies in a single list type.
+
 class _ListTab extends StatelessWidget {
   const _ListTab({required this.type});
 
@@ -78,7 +78,7 @@ class _ListTab extends StatelessWidget {
                 MaterialPageRoute(builder: (_) => MovieDetailsScreen(movie: movie)),
               ),
             ),
-            // Quick remove button (top-right corner).
+            
             Positioned(
               top: 0,
               right: 0,

@@ -7,9 +7,9 @@ import 'movie_lists_screen.dart';
 import 'profile_screen.dart';
 import 'search_screen.dart';
 
-/// The main scaffold shown after authentication. It houses the bottom
-/// navigation bar that switches between the core tabs: Home, Search,
-/// Lists, Favourites and Profile.
+
+
+
 class MainNavScreen extends StatefulWidget {
   const MainNavScreen({super.key});
 
@@ -20,7 +20,7 @@ class MainNavScreen extends StatefulWidget {
 class _MainNavScreenState extends State<MainNavScreen> {
   int _currentIndex = 0;
 
-  // The tabs shown in the bottom navigation bar, in order.
+  
   static const _tabs = [
     HomeScreen(),
     SearchScreen(),

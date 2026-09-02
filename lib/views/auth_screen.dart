@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import '../utils/app_colors.dart';
 import '../widgets/auth_form.dart';
 
-/// The main authentication screen containing both Login and Register forms.
-///
-/// A segmented control lets the user switch between the two modes. This is
-/// shown by [AuthGate] whenever the user is not authenticated.
+
+
+
+
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
 
@@ -15,7 +15,7 @@ class AuthScreen extends StatefulWidget {
 }
 
 class _AuthScreenState extends State<AuthScreen> {
-  /// Whether the register form or login form is currently shown.
+  
   bool _isRegister = true;
 
   void _toggleMode() {
@@ -32,7 +32,7 @@ class _AuthScreenState extends State<AuthScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const SizedBox(height: 24),
-              // App branding.
+              
               const Icon(Icons.movie, size: 72, color: AppColors.accent),
               const SizedBox(height: 8),
               const Text(
@@ -52,7 +52,7 @@ class _AuthScreenState extends State<AuthScreen> {
               ),
               const SizedBox(height: 32),
 
-              // Toggle between Login and Register.
+              
               SegmentedButton<bool>(
                 segments: const [
                   ButtonSegment(

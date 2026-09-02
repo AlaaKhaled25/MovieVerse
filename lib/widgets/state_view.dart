@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../utils/app_colors.dart';
 
-/// A reusable widget that shows one of three states: loading, an error, or an
-/// empty state. Centralising this keeps error/empty/loading handling
-/// consistent across every screen (a mandatory requirement).
+
+
+
 class StateView extends StatelessWidget {
   const StateView.loading({super.key})
       : message = null,
@@ -23,19 +23,19 @@ class StateView extends StatelessWidget {
         showLoading = false,
         onRetry = null;
 
-  /// The message to display.
+  
   final String? message;
 
-  /// Optional icon (mainly used by empty/error states).
+  
   final IconData? icon;
 
-  /// Whether this is an error state (affects colouring).
+  
   final bool isError;
 
-  /// When true, shows a spinner instead of the icon.
+  
   final bool showLoading;
 
-  /// Optional retry callback for error states.
+  
   final VoidCallback? onRetry;
 
   @override

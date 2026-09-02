@@ -1,39 +1,27 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <!--
-    If you are serving your web app in a path other than the root, change the
-    href value below to reflect the base path you are serving from.
-
-    The path provided below has to start and end with a slash "/" in order for
-    it to work correctly.
-
-    For more details:
-    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
-
-    This is a placeholder for base href that will be replaced by the value of
-    the `--base-href` argument provided to `flutter build`.
-  -->
+  
   <base href="$FLUTTER_BASE_HREF">
 
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
   <meta name="description" content="MovieVerse - Flutter movie app (TMDB, Firebase, Provider, SQFLite)">
 
-  <!-- iOS meta tags & icons -->
+  
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <meta name="apple-mobile-web-app-title" content="MovieVerse">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
-  <!-- Favicon -->
+  
   <link rel="icon" type="image/png" href="favicon.png"/>
 
   <title>MovieVerse</title>
   <link rel="manifest" href="manifest.json">
 
   <style>
-    /* Branded pre-Flutter loader: navy->blue gradient matching the app splash. */
+    
     html, body { margin: 0; height: 100%; }
     #boot-splash {
       position: fixed; inset: 0;
@@ -51,7 +39,7 @@
       display: flex; align-items: center; justify-content: center;
       box-shadow: 0 10px 34px rgba(245, 197, 24, 0.25);
     }
-    #boot-splash .logo svg { fill: #F5C518; }  /* AppColors.accent */
+    #boot-splash .logo svg { fill: #F5C518; }  
     #boot-splash h1 {
       color: #F5F5F5; font-family: Arial, sans-serif;
       margin: 28px 0 0; font-size: 38px; font-weight: bold; letter-spacing: 1.4px;
@@ -75,11 +63,11 @@
   </style>
 </head>
 <body>
-  <!-- Hidden once the Flutter engine draws its first frame. -->
+  
   <div id="boot-splash">
     <div class="logo">
       <svg viewBox="0 0 24 24" width="66" height="66" aria-hidden="true">
-        <!-- movie_filter icon -->
+        
         <path d="M18 4l2 4h-3l-2-4h-2l2 4h-3l-2-4H8l2 4H7L5 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4h-4z"/>
       </svg>
     </div>
@@ -89,17 +77,10 @@
     <div class="spinner"></div>
   </div>
 
-  <!--
-    You can customize the "flutter_bootstrap.js" script.
-    This is useful to provide a custom configuration to the Flutter loader
-    or to give the user feedback during the initialization process.
-
-    For more details:
-    * https://docs.flutter.dev/platform-integration/web/initialization
-  -->
+  
   <script src="flutter_bootstrap.js" async></script>
   <script>
-    // A "click" that hides the boot splash once Flutter is ready.
+    
     window.addEventListener("flutter-first-frame", function () {
       var el = document.getElementById("boot-splash");
       if (el) { el.style.transition = "opacity 0.3s"; el.style.opacity = "0"; setTimeout(function(){ el.remove(); }, 350); }

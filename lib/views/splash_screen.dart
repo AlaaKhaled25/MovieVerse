@@ -2,19 +2,19 @@ import 'package:flutter/material.dart';
 
 import '../utils/app_colors.dart';
 
-/// Animated, branded splash screen shown on app launch.
-///
-/// Uses a navy-to-blue gradient hero with a centered glowing movie icon, the
-/// MovieVerse wordmark and a tagline, plus a subtle shine + scale entrance.
-/// The AuthGate decides how long it stays visible (minimum duration + cap),
-/// so this widget owns only the visuals.
+
+
+
+
+
+
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
-  /// How long the splash should stay visible at minimum.
+  
   static const Duration minimumDuration = Duration(milliseconds: 800);
 
-  /// Safety cap: never let the splash block the UI longer than this.
+  
   static const Duration maximumDuration = Duration(seconds: 3);
 
   @override
@@ -59,7 +59,7 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // Gradient hero background: deep navy fading into a richer blue.
+      
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -72,7 +72,7 @@ class _SplashScreenState extends State<SplashScreen>
           child: Column(
             children: [
               const Spacer(flex: 2),
-              // Centered logo block (fade + scale entrance).
+              
               Center(
                 child: FadeTransition(
                   opacity: _fade,
@@ -81,7 +81,7 @@ class _SplashScreenState extends State<SplashScreen>
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        // Glowing rounded icon tile.
+                        
                         Container(
                           width: 116,
                           height: 116,
@@ -130,7 +130,7 @@ class _SplashScreenState extends State<SplashScreen>
                             letterSpacing: 0.5,
                           ),
                         ),
-                        // Subtle golden underline accent.
+                        
                         const SizedBox(height: 18),
                         FadeTransition(
                           opacity: _shimmer,
@@ -149,7 +149,7 @@ class _SplashScreenState extends State<SplashScreen>
                 ),
               ),
               const Spacer(flex: 3),
-              // Bottom progress indicator.
+              
               const SizedBox(
                 width: 24,
                 height: 24,

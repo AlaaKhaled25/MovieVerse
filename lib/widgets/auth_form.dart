@@ -3,12 +3,12 @@ import 'package:provider/provider.dart';
 
 import '../providers/auth_provider.dart';
 
-/// Reusable login/register form. It calls into the [AuthProvider] to perform
-/// the actual Firebase operation and shows validation + error feedback.
+
+
 class AuthForm extends StatefulWidget {
   const AuthForm({super.key, required this.isRegister});
 
-  /// When true renders the Register form; otherwise the Login form.
+  
   final bool isRegister;
 
   @override
@@ -32,7 +32,7 @@ class _AuthFormState extends State<AuthForm> {
     super.dispose();
   }
 
-  /// Basic email format validator.
+  
   String? _validateEmail(String? value) {
     if (value == null || value.trim().isEmpty) {
       return 'Email is required';
@@ -44,7 +44,7 @@ class _AuthFormState extends State<AuthForm> {
     return null;
   }
 
-  /// Password validator (register requires min length).
+  
   String? _validatePassword(String? value) {
     if (value == null || value.isEmpty) {
       return 'Password is required';
@@ -55,7 +55,7 @@ class _AuthFormState extends State<AuthForm> {
     return null;
   }
 
-  /// Confirm password must match the password.
+  
   String? _validateConfirm(String? value) {
     if (widget.isRegister && value != _passwordController.text) {
       return 'Passwords do not match';
@@ -72,7 +72,7 @@ class _AuthFormState extends State<AuthForm> {
     final email = _emailController.text;
     final password = _passwordController.text;
 
-    // Show an error banner if the auth operation fails.
+    
     if (!mounted) return;
     try {
       if (widget.isRegister) {

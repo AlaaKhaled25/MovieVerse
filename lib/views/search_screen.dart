@@ -8,9 +8,9 @@ import '../widgets/movie_card.dart';
 import '../widgets/state_view.dart';
 import 'movie_details_screen.dart';
 
-/// Search screen. Lets the user type a query and shows matching movies
-/// fetched from the TMDB search API (with a slight debounce to avoid
-/// hammering the network on every keystroke).
+
+
+
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
 
@@ -29,8 +29,8 @@ class _SearchScreenState extends State<SearchScreen> {
     super.dispose();
   }
 
-  /// Debounced search: waits 500ms after the user stops typing before
-  /// triggering a network request.
+  
+  
   void _onChanged(String query) {
     _debounce?.cancel();
     _debounce = Timer(const Duration(milliseconds: 500), () {
@@ -52,7 +52,7 @@ class _SearchScreenState extends State<SearchScreen> {
       ),
       body: Column(
         children: [
-          // Search input field.
+          
           Padding(
             padding: const EdgeInsets.all(16),
             child: TextField(
@@ -72,7 +72,7 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   Widget _buildBody(MovieProvider provider) {
-    // Loading state while the search is running.
+    
     if (provider.isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -86,7 +86,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
     final results = provider.searchResults;
 
-    // No query entered yet.
+    
     if (_controller.text.trim().isEmpty) {
       return const StateView.empty(
         'Type a movie name to start searching.',
@@ -94,7 +94,7 @@ class _SearchScreenState extends State<SearchScreen> {
       );
     }
 
-    // A query was entered but returned no results — distinct empty state.
+    
     if (results.isEmpty) {
       return StateView.empty(
         'No results found for "${_controller.text.trim()}"',
@@ -102,7 +102,7 @@ class _SearchScreenState extends State<SearchScreen> {
       );
     }
 
-    // Grid of search results.
+    
     return GridView.builder(
       padding: const EdgeInsets.all(16),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(

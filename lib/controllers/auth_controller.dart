@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 
-/// Thrown to surface friendly authentication errors to the UI.
+
 class AuthException implements Exception {
   final String message;
 
@@ -10,25 +10,25 @@ class AuthException implements Exception {
   String toString() => message;
 }
 
-/// Controller that owns the Firebase Authentication BUSINESS logic.
-///
-/// This is the "C" in the MVC layering:
-///   View (auth_form/widgets) -> Provider (AuthProvider, reactive state)
-///   -> Controller (this class, operations + error translation) -> Firebase SDK
-///
-/// The controller holds NO UI state; it only performs operations and exposes
-/// the auth-state stream. Provider wraps it for reactive state management.
+
+
+
+
+
+
+
+
 class AuthController {
   AuthController() : _auth = FirebaseAuth.instance;
 
   final FirebaseAuth _auth;
 
-  /// Stream of auth-state changes (user, or null when signed out).
+  
   Stream<User?> get authStateChanges => _auth.authStateChanges();
 
-  /// Signs the user in with the provided email/password.
-  ///
-  /// Throws an [AuthException] with a friendly message on failure.
+  
+  
+  
   Future<void> login(String email, String password) async {
     try {
       await _auth.signInWithEmailAndPassword(
@@ -40,7 +40,7 @@ class AuthController {
     }
   }
 
-  /// Creates a new account with the provided email/password.
+  
   Future<void> register(String email, String password) async {
     try {
       await _auth.createUserWithEmailAndPassword(
@@ -52,10 +52,10 @@ class AuthController {
     }
   }
 
-  /// Signs the current user out.
+  
   Future<void> logout() => _auth.signOut();
 
-  /// Maps a raw [FirebaseAuthException] code to a friendly, user-safe message.
+  
   String _friendlyAuthError(FirebaseAuthException e) {
     switch (e.code) {
       case 'invalid-email':

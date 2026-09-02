@@ -8,8 +8,8 @@ import '../widgets/movie_card.dart';
 import '../widgets/state_view.dart';
 import 'movie_details_screen.dart';
 
-/// The Home screen. It shows several horizontal lists of TMDB content:
-/// Popular, Top Rated, Now Playing and Upcoming.
+
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -18,7 +18,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  // The vertical list of sections shown on the home screen.
+  
   static const _sections = [
     MovieEndpoint.popular,
     MovieEndpoint.nowPlaying,
@@ -29,7 +29,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    // Kick off loading for all sections when the screen first appears.
+    
     final provider = context.read<MovieProvider>();
     for (final section in _sections) {
       provider.loadMovies(section);
@@ -45,7 +45,7 @@ class _HomeScreenState extends State<HomeScreen> {
         title: const Text('MovieVerse'),
       ),
       body: RefreshIndicator(
-        // Pull-to-refresh reloads every section from the network.
+        
         onRefresh: () async {
           for (final section in _sections) {
             await context.read<MovieProvider>().loadMovies(section, forceRefresh: true);
@@ -70,7 +70,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-/// A single horizontal scrolling section (e.g. "Popular") on the home screen.
+
 class _Section extends StatelessWidget {
   const _Section({
     required this.section,
@@ -107,7 +107,7 @@ class _Section extends StatelessWidget {
   }
 
   Widget _buildContent(BuildContext context) {
-    // Show a loading indicator while this (or another) section loads.
+    
     if (isLoading && movies.isEmpty) {
       return const SizedBox(
         height: 240,
@@ -115,7 +115,7 @@ class _Section extends StatelessWidget {
       );
     }
 
-    // Show a clear error state with a retry option.
+    
     if (error != null && movies.isEmpty) {
       return SizedBox(
         height: 160,
@@ -126,7 +126,7 @@ class _Section extends StatelessWidget {
       );
     }
 
-    // Show an empty state when nothing was returned.
+    
     if (movies.isEmpty) {
       return const SizedBox(
         height: 160,
@@ -134,7 +134,7 @@ class _Section extends StatelessWidget {
       );
     }
 
-    // Horizontal list of movie cards.
+    
     return SizedBox(
       height: 240,
       child: ListView.builder(

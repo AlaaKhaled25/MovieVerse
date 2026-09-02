@@ -1,6 +1,6 @@
 import 'movie.dart';
 
-/// A cast/crew member appearing in a movie.
+
 class CastMember {
   const CastMember({
     required this.id,
@@ -25,7 +25,7 @@ class CastMember {
       );
 }
 
-/// A production company (studio) that produced the movie.
+
 class ProductionCompany {
   const ProductionCompany({
     required this.id,
@@ -48,7 +48,7 @@ class ProductionCompany {
       );
 }
 
-/// A production country the movie was made in.
+
 class ProductionCountry {
   const ProductionCountry({required this.iso, required this.name});
 
@@ -62,7 +62,7 @@ class ProductionCountry {
       );
 }
 
-/// A spoken language in the movie.
+
 class SpokenLanguage {
   const SpokenLanguage({required this.code, required this.name});
 
@@ -75,11 +75,11 @@ class SpokenLanguage {
       );
 }
 
-/// The full detail view of a movie, as returned by the TMDB `/movie/{id}`
-/// endpoint with the `credits` appendage.
-///
-/// It wraps the base [Movie] fields plus the extended metadata (runtime,
-/// budget, revenue, tagline, status, studios, and the actor cast).
+
+
+
+
+
 class MovieDetails {
   const MovieDetails({
     required this.movie,
@@ -109,22 +109,22 @@ class MovieDetails {
   final List<ProductionCountry> productionCountries;
   final List<SpokenLanguage> spokenLanguages;
 
-  /// Builds a [MovieDetails] from the TMDB detail JSON (with `credits`).
+  
   factory MovieDetails.fromJson(Map<String, dynamic> json) {
-    // We need the full list of genres (with names). The base movie model only
-    // stores ids, so build a small map for this screen.
+    
+    
     final genreList = (json['genres'] as List?) ?? [];
     final genreIds = genreList
         .map((g) => (g as Map<String, dynamic>)['id'] as int? ?? 0)
         .where((id) => id != 0)
         .toList();
 
-    // The base movie object can be reconstructed from the same JSON.
+    
     final movieJson = Map<String, dynamic>.from(json)
       ..['genre_ids'] = genreIds;
     final movie = Movie.fromJson(movieJson);
 
-    // Build the genre-name lookup to use on the details screen.
+    
     final genreNames = <int, String>{};
     for (final g in genreList) {
       final map = g as Map<String, dynamic>;
@@ -132,7 +132,7 @@ class MovieDetails {
       final name = map['name'] as String?;
       if (id != null && name != null) genreNames[id] = name;
     }
-    // Store the names on a shared const map so the UI can read them.
+    
     genreNameLookup.addAll(genreNames);
 
     final credits = json['credits'] as Map<String, dynamic>? ?? {};
@@ -163,8 +163,8 @@ class MovieDetails {
   }
 }
 
-/// A mutable global so the details screen can resolve genre names into
-/// readable labels (the base [Movie] model only stores ids).
-/// Populated when [MovieDetails.fromJson] runs.
-// ignore: prefer_final_fields
+
+
+
+
 final Map<int, String> genreNameLookup = {};

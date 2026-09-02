@@ -6,9 +6,9 @@ import '../widgets/movie_card.dart';
 import '../widgets/state_view.dart';
 import 'movie_details_screen.dart';
 
-/// Screen showing the user's favourite movies. The data comes from the local
-/// SQFLite database via [FavouritesProvider], so favourites persist even
-/// after the app is closed and reopened (mandatory requirement).
+
+
+
 class FavouritesScreen extends StatelessWidget {
   const FavouritesScreen({super.key});
 
@@ -46,7 +46,7 @@ class FavouritesScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-                    // Quick remove (unfavourite) from the top-right corner.
+                    
                     Positioned(
                       top: 0,
                       right: 0,

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- MovieVerse brand colours (mirror lib/utils/app_colors.dart). -->
+    
     <color name="brand_primary">#0F1B2B</color>
     <color name="brand_surface">#1B2A3F</color>
     <color name="brand_accent">#F5C518</color>

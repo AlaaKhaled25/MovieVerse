@@ -4,9 +4,9 @@ import '../models/movie.dart';
 import '../utils/app_colors.dart';
 import '../utils/app_helpers.dart';
 
-/// A reusable poster card used throughout the app (home grids, search,
-/// favourites, movie lists). Keeping this as a reusable widget avoids
-/// duplicating layout/UI code in every screen.
+
+
+
 class MovieCard extends StatelessWidget {
   const MovieCard({
     super.key,
@@ -14,10 +14,10 @@ class MovieCard extends StatelessWidget {
     this.onTap,
   });
 
-  /// The movie this card represents.
+  
   final Movie movie;
 
-  /// Optional callback invoked when the card is tapped.
+  
   final VoidCallback? onTap;
 
   @override
@@ -27,7 +27,7 @@ class MovieCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Poster image (with a themed fallback when no image is available).
+          
           Expanded(
             child: ClipRRect(
               borderRadius: BorderRadius.circular(12),
@@ -54,7 +54,7 @@ class MovieCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 6),
-          // Title (max 2 lines to keep cards tidy).
+          
           Text(
             movie.title,
             maxLines: 2,
@@ -65,7 +65,7 @@ class MovieCard extends StatelessWidget {
               fontWeight: FontWeight.w600,
             ),
           ),
-          // Rating + release year in a compact row.
+          
           Row(
             children: [
               const Icon(Icons.star, color: AppColors.accent, size: 14),
@@ -92,7 +92,7 @@ class MovieCard extends StatelessWidget {
     );
   }
 
-  /// A simple styled placeholder shown when a poster is unavailable.
+  
   Widget _placeholder() {
     return Container(
       color: AppColors.surface,

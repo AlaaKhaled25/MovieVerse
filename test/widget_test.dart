@@ -1,4 +1,4 @@
-// Unit tests for the Movie model parsing logic.
+
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:movie_verse/models/movie.dart';
@@ -106,7 +106,7 @@ void main() {
       expect(details.productionCompanies.first.name, 'Warner Bros.');
       expect(details.productionCountries.first.name, 'United States of America');
       expect(details.spokenLanguages.first.name, 'English');
-      // Genre ids should be captured for the details screen.
+      
       expect(details.movie.genreIds, contains(18));
     });
   });

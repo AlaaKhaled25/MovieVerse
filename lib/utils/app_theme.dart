@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 
 import 'app_colors.dart';
 
-/// Central place for the application's overall theme (colors, typography,
-/// component styles) so the whole app looks consistent.
+
+
 class AppTheme {
   AppTheme._();
 
-  /// Light-ish theme built on the brand palette.
+  
   static ThemeData get light {
     final base = ThemeData(
       useMaterial3: true,
