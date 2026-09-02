@@ -319,6 +319,16 @@ firebase init hosting      # set 'build/web' as the public directory
 firebase deploy --only hosting
 ```
 
+**Deploy to GitHub Pages (automatic via GitHub Actions)**
+
+A workflow (`.github/workflows/deploy.yml`) builds the web app on every push to `main` and publishes it to Pages. To use it:
+
+1. On GitHub: **Settings → Pages** → Source: **GitHub Actions**.
+2. Push to `main`. The workflow runs `flutter analyze`, `flutter test`, builds with the correct `--base-href=/MovieVerse/`, then deploys.
+3. Your app will be live at `https://<username>.github.io/MovieVerse/`.
+
+> If you rename the repo, update the `--base-href` in the workflow to match the new sub-path. The `--base-href` flag overrides the `$FLUTTER_BASE_HREF` placeholder in `web/index.html`, so no code change is required.
+
 ---
 
 ## 🧪 Testing
@@ -363,6 +373,7 @@ The project was built in testable phases, each with a meaningful Git commit:
 
 - **Favourites/lists are local-only** (SQFLite on mobile, SharedPreferences on web) and are not synced across devices or accounts.
 - **Web persistence uses the browser's localStorage** — it is not durable SQLite; clearing site data removes it. Mobile remains the full-featured target.
+- **Web auth on GitHub Pages** serves from a different origin than the local dev server; Firebase generally allows any origin, but the email/password redirect flow can behave differently on Pages. The Flow: browse/test on the hosted Pages URL, and use mobile (Android/iOS) for the fully reliable target.
 - **iOS builds require macOS + Xcode** (unavailable on a Windows dev machine).
 - API results depend on TMDB's **free-tier rate limits**.
 

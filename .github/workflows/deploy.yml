@@ -1,0 +1,64 @@
+name: Deploy to GitHub Pages
+
+on:
+  # Deploy automatically when changes are pushed to main.
+  push:
+    branches: [main]
+  # Allow manual deployment from the Actions tab.
+  workflow_dispatch:
+
+# Grant the job permission to publish to GitHub Pages.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Only one deployment at a time; cancel any in-progress run when a new push
+# to main happens.
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Restore dependencies
+        run: flutter pub get
+
+      - name: Analyze
+        run: flutter analyze
+
+      - name: Run tests
+        run: flutter test
+
+      # IMPORTANT: base-href must match the GitHub Pages sub-path. For a repo
+      # at <user>.github.io/<repo> this is "/<repo>/". If the repo is later
+      # deployed from another Pages source, adjust this value.
+      - name: Build web (release)
+        run: flutter build web --release --base-href=/MovieVerse/
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: build/web
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
