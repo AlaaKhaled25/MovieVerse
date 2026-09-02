@@ -78,24 +78,23 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
     return _buildScaffoldShell(child: _buildContent(details));
   }
 
-  /// Wraps content in the scrollable scaffold + backdrop header.
+  /// Wraps content in the scrollable backdrop header (NOT a Scaffold — the
+  /// single Scaffold lives in build() above, so we never nest one inside it).
   Widget _buildScaffoldShell({required Widget child}) {
-    return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            expandedHeight: 280,
-            pinned: true,
-            flexibleSpace: FlexibleSpaceBar(
-              background: _buildBackdrop(),
-            ),
+    return CustomScrollView(
+      slivers: [
+        SliverAppBar(
+          expandedHeight: 280,
+          pinned: true,
+          flexibleSpace: FlexibleSpaceBar(
+            background: _buildBackdrop(),
           ),
-          SliverPadding(
-            padding: EdgeInsets.zero,
-            sliver: SliverToBoxAdapter(child: child),
-          ),
-        ],
-      ),
+        ),
+        SliverPadding(
+          padding: EdgeInsets.zero,
+          sliver: SliverToBoxAdapter(child: child),
+        ),
+      ],
     );
   }
 

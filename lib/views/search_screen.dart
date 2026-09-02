@@ -87,10 +87,18 @@ class _SearchScreenState extends State<SearchScreen> {
     final results = provider.searchResults;
 
     // No query entered yet.
-    if (_controller.text.trim().isEmpty || results.isEmpty) {
+    if (_controller.text.trim().isEmpty) {
       return const StateView.empty(
         'Type a movie name to start searching.',
         icon: Icons.search,
+      );
+    }
+
+    // A query was entered but returned no results — distinct empty state.
+    if (results.isEmpty) {
+      return StateView.empty(
+        'No results found for "${_controller.text.trim()}"',
+        icon: Icons.search_off,
       );
     }
 

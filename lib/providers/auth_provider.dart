@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 
@@ -17,7 +19,7 @@ class AuthProvider extends ChangeNotifier {
   AuthProvider() {
     // Listen to auth state changes so login/logout is reflected everywhere
     // without manual wiring.
-    _controller.authStateChanges.listen((user) {
+    _subscription = _controller.authStateChanges.listen((user) {
       _user = user;
       _isLoading = false;
       notifyListeners();
@@ -25,6 +27,10 @@ class AuthProvider extends ChangeNotifier {
   }
 
   final AuthController _controller = AuthController();
+
+  /// Subscription to the auth-state stream, cancelled in dispose() to avoid
+  /// leaking the listener when this provider is destroyed.
+  late final StreamSubscription<User?> _subscription;
 
   User? _user;
 
@@ -52,4 +58,10 @@ class AuthProvider extends ChangeNotifier {
 
   /// Signs the current user out.
   Future<void> logout() => _controller.logout();
+
+  @override
+  void dispose() {
+    _subscription.cancel();
+    super.dispose();
+  }
 }
