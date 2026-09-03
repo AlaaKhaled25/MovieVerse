@@ -2,7 +2,7 @@
 
 # 🎬 MovieVerse
 
-**A complete, real-world Flutter movie application** — the ITI Summer Internship 2026 graduation project.
+**A complete, real-world Flutter movie application** the ITI Summer Internship 2026 graduation project.
 
 REST API integration · Firebase Authentication · Provider state management · Local persistence · Clean MVC architecture · Polished UI/UX
 
@@ -155,7 +155,7 @@ Splash (>= min time, < hard cap)
 Tapping any movie → Movie Details (cast, studios, metadata, favourite, lists)
 ```
 
-On login, favourites and personal lists are loaded from local storage so they survive app restarts / page reloads.
+On login, favourites and personal lists are loaded from local storage so they survive app restarts/page reloads.
 
 ---
 
@@ -205,7 +205,7 @@ All HTTP communication is isolated in `TmdbApiService` (`lib/services/tmdb_api_s
 
 The private `_getJson()` helper centralises network/timeout handling, JSON parsing, and friendly `ApiException` messages. The API key lives in `lib/config/api_config.dart`, which is **gitignored**.
 
-> 🔐 **Firebase keys are public by design.** Unlike the TMDB key, the Firebase client API keys in `lib/firebase_options.dart` and `android/app/google-services.json` are **not secrets** — Google embeds them in every client binary and web build because the app reads them at runtime. They must be committed for the app to work. Real protection comes from Firebase **Security Rules** and **App Check**, not from hiding the key.
+> 🔐 **Firebase keys are public by design.** Unlike the TMDB key, the Firebase client API keys in `lib/firebase_options.dart` and `android/app/google-services.json` are **not secrets**. Google embeds them in every client binary and web build because the app reads them at runtime. They must be committed for the app to work. Real protection comes from Firebase **Security Rules** and **App Check**, not from hiding the key.
 
 ---
 
@@ -374,7 +374,7 @@ The project was built in testable phases, each with a meaningful Git commit:
 ## ⚠️ Known Limitations
 
 - **Favourites/lists are local-only** (SQFLite on mobile, SharedPreferences on web) and are not synced across devices or accounts.
-- **Web persistence uses the browser's localStorage** — it is not durable SQLite; clearing site data removes it. Mobile remains the full-featured target.
+- **Web persistence uses the browser's localStorage**; it is not durable SQLite; clearing site data removes it. Mobile remains the full-featured target.
 - **Web auth on GitHub Pages** serves from a different origin than the local dev server; Firebase generally allows any origin, but the email/password redirect flow can behave differently on Pages. The Flow: browse/test on the hosted Pages URL, and use mobile (Android/iOS) for the fully reliable target.
 - **iOS builds require macOS + Xcode** (unavailable on a Windows dev machine).
 - API results depend on TMDB's **free-tier rate limits**.
